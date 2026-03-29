@@ -74,6 +74,7 @@ class DirectThreadRepository extends Repository {
       url: `/api/v1/direct_v2/threads/broadcast/${options.item}/`,
       method: "POST",
       form: form,
+      signed: options.signed || false,
       params: options.qs,
     });
     return response.data;

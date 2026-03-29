@@ -23,5 +23,5 @@ module.exports = {
   MQTT_HOST: "edge-mqtt.facebook.com",
   FBNS_HOST: "mqtt-mini.facebook.com",
   INSTAGRAM_PACKAGE_NAME: "com.instagram.android",
-  FACEBOOK_ANALYTICS_APPLICATION_ID: "238259013320092",
+  FACEBOOK_ANALYTICS_APPLICATION_ID: "1217981644879628",
 };

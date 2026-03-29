@@ -79,7 +79,13 @@ class DirectRepository extends Repository {
     const response = await this.client.request.send({
       method: "GET",
       url: "/api/v1/direct_v2/inbox/",
-      params: cursor ? { cursor } : {},
+      params: {
+        visual_message_return_type: "unseen",
+        cursor: cursor || undefined,
+        thread_message_limit: 10,
+        persistentBadging: true,
+        limit: 20,
+      },
     });
     return response.data;
   }

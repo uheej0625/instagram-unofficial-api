@@ -166,13 +166,23 @@ class RequestManager {
       config.headers = config.headers || {};
       config.headers["Content-Type"] = "application/x-www-form-urlencoded";
 
-      const signed = this.signPayload(config.form);
       const formBody = new URLSearchParams();
-      for (const key in signed) {
-        formBody.append(key, signed[key]);
+
+      // If signed is explicitly false, do not sign payload. Otherwise sign it.
+      if (config.signed !== false) {
+        const signed = this.signPayload(config.form);
+        for (const key in signed) {
+          formBody.append(key, signed[key]);
+        }
+      } else {
+        for (const key in config.form) {
+          formBody.append(key, config.form[key]);
+        }
       }
+
       config.data = formBody.toString();
       delete config.form;
+      delete config.signed;
     }
 
     try {
