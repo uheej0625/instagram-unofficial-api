@@ -1,0 +1,6 @@
+node_modules
+.env
+.clean-session.json
+*.log
+examples/test-*
+temp-*

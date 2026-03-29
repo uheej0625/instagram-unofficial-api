@@ -1,0 +1,55 @@
+{
+  "name": "instagram-unofficial-api",
+  "version": "1.0.0",
+  "description": "Instagram Private API Client built with pure JS (ES6+) supporting REST and Realtime MQTT DM Messaging.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node examples/test-e2e.js",
+    "dm": "node examples/test-dm.js"
+  },
+  "keywords": [
+    "instagram",
+    "api",
+    "private"
+  ],
+  "author": "uheej0625",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "chalk": "^5.6.2",
+    "chance": "^1.1.11",
+    "crypto": "^1.0.1",
+    "debug": "^4.3.4",
+    "eventemitter3": "^5.0.1",
+    "form-data": "^4.0.0",
+    "lodash": "^4.17.21",
+    "mqtts": "^1.5.0",
+    "node-persist": "^4.0.4",
+    "pako": "^2.1.0",
+    "protobufjs": "^7.5.4",
+    "punycode": "^2.3.1",
+    "socks": "^2.8.1",
+    "tough-cookie": "^4.1.3",
+    "ts-custom-error": "^3.3.1",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "node-fetch": "^3.3.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/uheej0625/instagram-unofficial-api.git"
+  },
+  "bugs": {
+    "url": "https://github.com/uheej0625/instagram-unofficial-api/issues"
+  },
+  "homepage": "https://github.com/uheej0625/instagram-unofficial-api#readme"
+}
