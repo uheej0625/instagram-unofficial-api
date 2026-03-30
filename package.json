@@ -1,6 +1,6 @@
 {
   "name": "instagram-unofficial-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Instagram Private API Client built with pure JS (ES6+) supporting REST and Realtime MQTT DM Messaging.",
   "main": "src/index.js",
   "scripts": {
