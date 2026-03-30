@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GraphqlParser = void 0;
-const thrift_1 = require("../../thrift");
-const shared_1 = require("../../shared");
+const thrift_1 = require("../thrift");
+const shared_1 = require("../../utils/shared");
 class GraphqlParser {
     parseMessage(topic, payload) {
         const message = (0, shared_1.isJson)(payload)

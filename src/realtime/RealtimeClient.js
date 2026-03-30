@@ -60,17 +60,83 @@ class RealtimeClient extends EventEmitter {
       this.emit("disconnected");
     });
 
+    const { tryUnzipAsync } = require("../utils/shared");
+    const { GraphqlParser } = require("./parsers/graphql.parser");
+    const { IrisParser } = require("./parsers/iris.parser");
+    const graphqlParser = new GraphqlParser();
+    const irisParser = new IrisParser();
+
     // Basic message forwarding (to be strongly parsed later)
-    this.mqtt.on("message", (msg) => this.emit("raw_message", msg));
-    // @ts-ignore - 'receive' is emitted by the custom client but not in base types
-    this.mqtt.on(
-      "receive",
-      (/** @type {any} */ topic, /** @type {any} */ data) =>
-        this._routeParsedPacket(topic, data),
-    );
+    this.mqtt.on("message", async (msg) => {
+      this.emit("raw_message", msg);
+
+      try {
+        const payload = await tryUnzipAsync(msg.payload);
+
+        let parsed = null;
+        try {
+          // Try Iris JSON
+          parsed = irisParser.parseMessage(msg.topic, payload);
+        } catch (e) {
+          // Fallback to GraphQL/Thrift parser
+          try {
+            parsed = graphqlParser.parseMessage(msg.topic, payload);
+          } catch (err2) {}
+        }
+
+        if (parsed) {
+          const parsedArray = Array.isArray(parsed) ? parsed : [parsed];
+          // Provide specific routing
+          this._routeParsedPacket({ id: msg.topic }, parsedArray);
+
+          // Reconstruct the legacy emit payload (e.g. { topic, message_data, body ... })
+          // Usually the original emit returned an array of the `data` properties
+          const messages = parsedArray.map((p) => p.data || p);
+
+          // To be totally safe, just emit exactly what old one did:
+          // "receive", topic, messages
+          this.emit("receive", msg.topic, messages);
+        }
+      } catch (e) {
+        console.error("[MQTT PARSE ERR]", e.message);
+      }
+    });
+
+    // Remove old receiver
 
     try {
       await this.mqtt.connect();
+
+      // Subscribe to IRIS when possible (Direct Messages)
+      const { compressDeflate } = require("../utils/shared");
+
+      let irisParams = options.irisData;
+      if (!irisParams) {
+        try {
+          const res = await this.client.request.send({
+            method: "GET",
+            url: "/api/v1/direct_v2/inbox/",
+          });
+          if (res && res.data) {
+            irisParams = res.data;
+          }
+        } catch (e) {}
+      }
+
+      if (irisParams) {
+        try {
+          const data = JSON.stringify({
+            seq_id: irisParams.seq_id,
+            snapshot_at_ms: irisParams.snapshot_at_ms,
+            snapshot_app_version: Constants.APP_VERSION,
+          });
+          await this.mqtt.publish({
+            topic: "134",
+            payload: await compressDeflate(Buffer.from(data)),
+            qosLevel: 1,
+          });
+        } catch (e) {}
+      }
     } catch (error) {
       this.emit("error", error);
       throw error;
